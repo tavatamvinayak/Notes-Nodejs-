@@ -35,10 +35,7 @@ router.post('/', async (req, res) => {
 
             if (decryptedPassword === Password) {
                 console.log("Login success & password is corrected")
-               
-
-                // Json web token
-
+            
                 // // JWT
                 const Token = jwt.sign({ Email: FindEmail.Email, id: FindEmail._id }, 'SecreteKeyVT');
                 console.log(Token)
