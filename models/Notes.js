@@ -11,7 +11,7 @@ const Notes = mongoose.Schema({
     },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
+        ref:"users",
         required:true
     },
     activated: Boolean,

@@ -21,7 +21,7 @@ router.put('/:noteId', auth, async (req, res) => {
 
     try {
         const updateNote = await Notes.findByIdAndUpdate(id , newNotes,{new:true})
-        res.json(updateNote).status(200);
+        res.json({ updateNote , success:true }).status(200);
         console.log("update note success")
 
     } catch (error) {

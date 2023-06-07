@@ -1,12 +1,17 @@
 const jwt = require('jsonwebtoken');
 
+
+// // env access
+require('dotenv').config()
+
+
 const auth = async(req,res,next)=>{
     try {
-        let Token = req.headers.authorization;
+        let Token = req.headers.authorization; // // add  Headers in Athorization = value : bearer (bearer and token space is IMP )Token 
         if(Token){
             Token = Token.split(" ")[1]
-            let user = jwt.verify(Token , 'SecreteKeyVT')
-            req.userId = user.id; /// signup & login  line : 37 & 40  user.id
+            let user = jwt.verify(Token , process.env.TOKEN_SCRETE_KEY) // // Token = user data 
+            req.userId = user.id; /// signup & login  line : 52 & 55  user.id
             console.log("token verify success middleware")
         }
         else{

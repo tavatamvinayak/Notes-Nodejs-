@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+// // env access
+require('dotenv').config()
 
-// // encrypt
-const CryptoJS = require("crypto-js");
+// // bcrypt password
+const bcrypt = require('bcryptjs');
 
 /// Jwt
 const jwt = require('jsonwebtoken');
@@ -15,8 +17,21 @@ const Users = require('../models/User');
 const auth = require('../Middleware/auth');
 
 
+// // express validation 
+const { body ,  validationResult  } = require("express-validator");
+const {LOGIN_ExpressValidation } = require('./../validators/validation')
 
-router.post('/', async (req, res) => {
+
+router.post('/', LOGIN_ExpressValidation ,async (req, res) => {
+
+         // express validation errors
+         const errors = validationResult(req);
+         if(!errors.isEmpty()){
+             return res.status(400).json({errors:errors.array()})
+         }
+
+
+
     const Logins = new Users();
     // request body login
     const { Email, Password } = req.body
@@ -30,26 +45,26 @@ router.post('/', async (req, res) => {
         // // Exist or Not Email
         if (FindEmail != null) {  // req.body Email
 
-            /// /// decrypt Password
-            const decryptedPassword = CryptoJS.AES.decrypt(FindEmail.Password, 'Secret Key VinayakTavatam').toString(CryptoJS.enc.Utf8);
-
-            if (decryptedPassword === Password) {
+            /// /// bcryptJS Password
+            // Load hash from your password DB.
+            const Compare_Password = bcrypt.compareSync(Password, FindEmail.Password);
+            if (Compare_Password) {
                 console.log("Login success & password is corrected")
             
                 // // JWT
-                const Token = jwt.sign({ Email: FindEmail.Email, id: FindEmail._id }, 'SecreteKeyVT');
+                const Token = jwt.sign({ Email: FindEmail.Email, id: FindEmail._id }, process.env.TOKEN_SCRETE_KEY);
                 console.log(Token)
-                res.send(Token)
+                res.json({ success: true, user: {Email : FindEmail.Email}, token: Token })
 
 
             } else {
                 console.log("PassWord invalid")
-                res.send('PassWord invalid')
+                res.json({success : false , errors :'Email &  Password invalid', Password :'Password invalid'}).status(401)
             }
 
         } else {
             console.log("Email invalid ")
-            res.send("Email invalid")
+            res.json({success : false  ,errors :'Email &  Password invalid', Email :"Email invalid"}).status(401)
         }
 
     } catch (error) {

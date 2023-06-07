@@ -1,18 +1,25 @@
+// // imports
 const express = require('express');
+const cors =require('cors')
+
+
 const app = express();
+
+const Port = 8080 || proccess.env.PORT
 
 // // db connect
 const dbconnect = require('./db')
 dbconnect();
 
 
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 
 // // routes
-app.use('/signup', require('./routes/signup'))
-app.use('/login', require('./routes/login'))
+app.use('/signup', require('./routes/signup'));
+app.use('/login', require('./routes/login'));
 
 
 // /// // CURD 
@@ -22,8 +29,12 @@ app.use('/notes',require('./CRUD/UpdateNote'));  // // put      //  update notes
 app.use('/notes',require('./CRUD/DeleteNote'));  // // delete   //  delete notes
 
 
+app.get('/data',(req,res)=>{
+    res.json({name:"vishal" , last:"tavatam"})
+    console.log("data sended success ")
+})
 
 
-app.listen(8080,()=>{
-    console.log("8080")
+app.listen(Port,()=>{
+    console.log("8080");
 })
